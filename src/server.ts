@@ -17,7 +17,7 @@ async function main() {
 });
 
   // DB verbinden
-  // await AppDataSource.initialize();
+  await AppDataSource.initialize();
   console.log("✅ Database connected");
 
   app.use("/user", user_router);
