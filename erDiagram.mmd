@@ -1,0 +1,54 @@
+erDiagram
+  USERS ||--o{ ENTRIES : "creates"
+  FIRST_AID_KITS ||--o{ ENTRIES : "has"
+  ENTRIES ||--o{ ENTRY_ITEMS : "contains"
+  PRODUCTS ||--o{ ENTRY_ITEMS : "is taken"
+  FIRST_AID_KITS ||--o{ KIT_PRODUCTS : "stocks"
+  PRODUCTS ||--o{ KIT_PRODUCTS : "stocked in"
+
+  USERS {
+    uuid id PK
+    varchar email UK
+    varchar passwordHash
+    enum role
+    timestamptz createdAt
+  }
+
+  FIRST_AID_KITS {
+    uuid id PK
+    varchar code UK
+    varchar location
+    timestamptz createdAt
+  }
+
+  PRODUCTS {
+    uuid id PK
+    varchar name UK
+  }
+
+  KIT_PRODUCTS {
+    uuid id PK
+    uuid kit_id FK
+    uuid product_id FK
+    int targetQty
+    int currentQty
+    timestamptz updatedAt
+    "UNIQUE(kit_id, product_id)"
+  }
+
+  ENTRIES {
+    uuid id PK
+    uuid kit_id FK
+    uuid createdBy_id FK
+    timestamptz occurredAt
+    text description
+    text measures "NULL"
+    timestamptz createdAt
+  }
+
+  ENTRY_ITEMS {
+    uuid id PK
+    uuid entry_id FK
+    uuid product_id FK
+    int qty
+  }

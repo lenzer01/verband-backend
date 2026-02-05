@@ -1,0 +1,45 @@
+{
+  "name": "verbandskasten",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+
+    "db:cli": "typeorm-ts-node-commonjs -d src/db/data-source.ts",
+    "migration:generate": "npm run db:cli -- migration:generate src/db/migrations/Init",
+    "migration:run": "npm run db:cli -- migration:run",
+    "migration:revert": "npm run db:cli -- migration:revert"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.10.1",
+    "pg": "^8.18.0",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.28",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^25.2.0",
+    "ts-node-dev": "^2.0.0",
+    "typeorm-ts-node-commonjs": "^0.3.20",
+    "typescript": "^5.9.3"
+  }
+}

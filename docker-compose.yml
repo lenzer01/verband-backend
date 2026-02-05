@@ -1,0 +1,13 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: dvb
+      POSTGRES_PASSWORD: dvb
+      POSTGRES_DB: dvb
+    ports:
+      - "5433:5432"
+    volumes:
+      - dvb_pg:/var/lib/postgresql/data
+volumes:
+  dvb_pg:
