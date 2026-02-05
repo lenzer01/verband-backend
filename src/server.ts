@@ -4,6 +4,7 @@ dotenv.config();
 import { createApp } from "./app";
 import { AppDataSource } from "./db/dataSource";
 import { user_router } from "./routes/userRoutes";
+import {auth_router} from "./routes/authRoutes";
 
 async function main() {
   const app = createApp();
@@ -17,9 +18,10 @@ async function main() {
 });
 
   // DB verbinden
-  // await AppDataSource.initialize();
+  await AppDataSource.initialize();
   console.log("✅ Database connected");
 
+  app.use("/auth", auth_router);
   app.use("/user", user_router);
 
   const port = Number(process.env.PORT ?? 3000);

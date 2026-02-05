@@ -1,27 +1,24 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 export enum UserRole {
   REPORTER = "REPORTER",     // Einträge erstellen, eigene sehen
-  LEADERSHIP = "LEADERSHIP", // alle Einträge sehen
   ADMIN = "ADMIN"            // Bestände / Nachfüllbedarf verwalten
 }
 
 @Entity({ name: "users" })
-@Unique(["email"])
 export class User {
-  @PrimaryGeneratedColumn("uuid")
-  id!: string;
+  @PrimaryGeneratedColumn("increment")
+  id!: number;
 
-  @Column({ type: "varchar", length: 255 })
+  @Column({ type: "varchar", length: 255, nullable: false })
+  name!: string;
+
+  @Column({ type: "varchar", length: 255, nullable: false, unique: true })
   email!: string;
 
-  // Passwort niemals im Klartext speichern!
-  @Column({ type: "varchar", length: 255 })
+  @Column({ type: "varchar", length: 255, nullable: false })
   passwordHash!: string;
 
   @Column({ type: "enum", enum: UserRole, default: UserRole.REPORTER })
   role!: UserRole;
-
-  @CreateDateColumn({ type: "timestamptz" })
-  createdAt!: Date;
 }
