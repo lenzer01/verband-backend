@@ -3,12 +3,12 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { DataSource } from "typeorm";
-import { User } from "../entities/User";
-import { FirstAidKit } from "../entities/FirstAidKit";
-import { Product } from "../entities/Product";
-import { KitProduct } from "../entities/KitProduct";
-import { Entry } from "../entities/Entry";
-import { EntryItem } from "../entities/EntryItem";
+import { User } from "../entities/user";
+import { FirstAidKit } from "../entities/firstAidKit";
+import { Product } from "../entities/product";
+import { KitProduct } from "../entities/kitProduct";
+import { Entry } from "../entities/entry";
+import { EntryItem } from "../entities/entryItem";
 
 export const AppDataSource = new DataSource({
   type: "postgres",

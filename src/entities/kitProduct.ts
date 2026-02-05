@@ -1,6 +1,6 @@
 import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
-import { FirstAidKit } from "./FirstAidKit";
-import { Product } from "./Product";
+import { FirstAidKit } from "./firstAidKit";
+import { Product } from "./product";
 
 @Entity({ name: "kit_products" })
 @Unique(["kit", "product"])

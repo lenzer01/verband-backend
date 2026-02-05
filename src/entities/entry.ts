@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { FirstAidKit } from "./FirstAidKit";
-import { User } from "./User";
+import { FirstAidKit } from "./firstAidKit";
+import { User } from "./user";
 
 @Entity({ name: "entries" })
 export class Entry {
