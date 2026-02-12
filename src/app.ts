@@ -3,8 +3,8 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import { auth_router } from "./routes/authRoutes";
-import { user_router } from "./routes/userRoutes";
+import { authRouter } from "./routes/authRoutes";
+import { userRouter } from "./routes/userRoutes";
 
 export function createApp() {
   const app = express();
@@ -19,8 +19,8 @@ export function createApp() {
   });
 
   // Routes
-  app.use("/auth", auth_router);
-  app.use("/user", user_router);
+  app.use("/auth", authRouter);
+  app.use("/user", userRouter);
 
   return app;
 }

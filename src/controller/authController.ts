@@ -5,7 +5,7 @@ import * as userService from "../service/userService";
  * POST /auth/register
  * Registriert einen neuen Benutzer
  */
-export async function auth_register(req: Request, res: Response): Promise<void> {
+export async function authRegister(req: Request, res: Response): Promise<void> {
     try {
         const { name, email, password } = req.body;
 
@@ -34,7 +34,7 @@ export async function auth_register(req: Request, res: Response): Promise<void> 
  * POST /auth/login
  * Authentifiziert einen Benutzer mit Email und Passwort
  */
-export async function auth_login(req: Request, res: Response): Promise<void> {
+export async function authLogin(req: Request, res: Response): Promise<void> {
     try {
         const { email, password } = req.body;
 
