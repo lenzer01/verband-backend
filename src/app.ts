@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import { entryRouter } from "./routes/entryRoutes";
 import { authRouter } from "./routes/authRoutes";
 import { userRouter } from "./routes/userRoutes";
 
@@ -19,6 +20,7 @@ export function createApp() {
   });
 
   // Routes
+  app.use("/entry", entryRouter);
   app.use("/auth", authRouter);
   app.use("/user", userRouter);
 
