@@ -1,15 +1,15 @@
 import { Router } from "express";
-import { user_get, user_get_all, user_delete } from "../controller/userController";
+import { userGet, userGetAll, userDelete } from "../controller/userController";
 import { authenticate, adminOnly } from "../middleware/authMiddleware";
 
-export const user_router = Router();
+export const userRouter = Router();
 
 
 // GET /user - Alle Benutzer abrufen (nur Admins)
-user_router.get("/", authenticate, adminOnly, user_get_all);
+userRouter.get("/", authenticate, adminOnly, userGetAll);
 
 // GET /user/:id - Einzelnen Benutzer abrufen (Admins oder eigener User)
-user_router.get("/:id", authenticate, user_get);
+userRouter.get("/:id", authenticate, userGet);
 
 // DELETE /user/:id - Benutzer löschen (nur Admins)
-user_router.delete("/:id", authenticate, adminOnly, user_delete);
+userRouter.delete("/:id", authenticate, adminOnly, userDelete);

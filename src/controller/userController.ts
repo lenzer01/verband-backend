@@ -6,7 +6,7 @@ import { UserRole } from "../entities/user";
 /**
  * GET /user - Alle Benutzer abrufen (nur Admins)
  */
-export async function user_get_all(request: Request, response: Response) {
+export async function userGetAll(request: Request, response: Response) {
     try {
         const result = await userService.getUser();
 
@@ -23,7 +23,7 @@ export async function user_get_all(request: Request, response: Response) {
  * GET /user/:id - Einzelnen Benutzer abrufen
  * Normale User können nur sich selbst sehen, Admins alle
  */
-export async function user_get(request: Request, response: Response) {
+export async function userGet(request: Request, response: Response) {
     try {
         const idParam = Array.isArray(request.params.id) ? request.params.id[0] : request.params.id;
         const id = idParam ? parseInt(idParam, 10) : undefined;
@@ -53,7 +53,7 @@ export async function user_get(request: Request, response: Response) {
     }
 }
 
-export async function user_delete(request: Request, response: Response) {
+export async function userDelete(request: Request, response: Response) {
     try {
         const idParam = Array.isArray(request.params.id) ? request.params.id[0] : request.params.id;
         const id = idParam ? parseInt(idParam, 10) : undefined;
