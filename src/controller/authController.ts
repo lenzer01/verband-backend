@@ -1,27 +1,23 @@
 import { Request, Response } from "express";
 import * as userService from "../service/userService";
+import { UserRole } from "../entities/user";
 
 /**
  * POST /auth/register
- * Registriert einen neuen Benutzer
+ * Registriert einen neuen Benutzer (nur Admins)
  */
 export async function authRegister(req: Request, res: Response): Promise<void> {
     try {
-        const { name, email, password, adminKey } = req.body;
+        const { name, email, password, role } = req.body;
 
         if (!name || !email || !password) {
             res.status(400).json({ error: "Name, Email und Passwort sind erforderlich" });
             return;
         }
 
-        const isAdmin = !!adminKey && adminKey === process.env.ADMIN_KEY;
+        const userRole = role === UserRole.ADMIN ? UserRole.ADMIN : UserRole.REPORTER;
 
-        if (adminKey && !isAdmin) {
-            res.status(403).json({ error: "Ungültiger Admin-Key" });
-            return;
-        }
-
-        const user = await userService.createUser(name, email, password, isAdmin);
+        const user = await userService.createUser(name, email, password, userRole);
 
         const { passwordHash, ...userWithoutPassword } = user;
         res.status(201).json({

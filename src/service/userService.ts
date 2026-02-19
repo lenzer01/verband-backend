@@ -17,8 +17,16 @@ const passwordSchema = z
     .regex(/[0-9]/, "Passwort muss mindestens eine Zahl enthalten");
 
 const SALT_ROUNDS = 10;
-const JWT_SECRET = process.env.JWT_SECRET!;
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN!;
+
+function getJwtSecret(): string {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) throw new Error("JWT_SECRET ist nicht konfiguriert");
+    return secret;
+}
+
+function getJwtExpiresIn(): string {
+    return process.env.JWT_EXPIRES_IN || "7d";
+}
 
 export interface AuthPayload {
     userId: number;
@@ -35,7 +43,7 @@ export async function createUser(
     name: string,
     email: string,
     password: string,
-    admin: boolean
+    role: UserRole
 ): Promise<User> {
     const emailResult = emailSchema.safeParse(email);
     if (!emailResult.success) {
@@ -58,7 +66,7 @@ export async function createUser(
         name,
         email,
         passwordHash,
-        role: admin ? UserRole.ADMIN : UserRole.REPORTER
+        role
     });
 
     return await userRepository.save(user);
@@ -102,7 +110,7 @@ export async function login(email: string, password: string): Promise<LoginResul
         role: user.role
     };
 
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN } as jwt.SignOptions);
+    const token = jwt.sign(payload, getJwtSecret(), { expiresIn: getJwtExpiresIn() } as jwt.SignOptions);
 
     const { passwordHash, ...userWithoutPassword } = user;
 
@@ -114,7 +122,7 @@ export async function login(email: string, password: string): Promise<LoginResul
 
 export function verifyToken(token: string): AuthPayload {
     try {
-        return jwt.verify(token, JWT_SECRET) as AuthPayload;
+        return jwt.verify(token, getJwtSecret()) as AuthPayload;
     } catch (error) {
         throw new Error("Ungültiges oder abgelaufenes Token");
     }

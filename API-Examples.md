@@ -1,31 +1,22 @@
 # API-Beispiele
 
-## Registrierung
+## Registrierung (nur Admin)
 ```
 POST /auth/register
-Content-Type: application/json
-
-{
-  "name": "Max Mustermann",
-  "email": "max@example.com",
-  "password": "geheimesPasswort123"
-}
-```
-
-### Registrierung als Admin
-```
-POST /auth/register
+Authorization: Bearer <JWT_TOKEN>
 Content-Type: application/json
 
 {
   "name": "Max Mustermann",
   "email": "max@example.com",
   "password": "geheimesPasswort123",
-  "adminKey": "<ADMIN_KEY>"
+  "role": "REPORTER"
 }
 ```
 
-> **Hinweis:** Ohne `adminKey` wird ein normaler Benutzer (REPORTER) erstellt. Mit gültigem `adminKey` erhält der Benutzer die Rolle ADMIN.
+> **Pflichtfelder:** `name`, `email`, `password`  
+> **Optionale Felder:** `role` (`"REPORTER"` oder `"ADMIN"`, Standard: `REPORTER`)  
+> **Hinweis:** Nur Admins können neue Benutzer anlegen.
 
 ## Login
 ```
