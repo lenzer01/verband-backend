@@ -20,8 +20,8 @@ export async function entryCreate(request: Request, response: Response) {
 
         const { kitId, occurredAt, incident, description, firstAider, measures, materialList, usedMaterial, witness } = request.body;
 
-        if (!kitId || !occurredAt || !description) {
-            response.status(400).json({ error: "kitId, occurredAt und description sind erforderlich" });
+        if (!kitId || !occurredAt || !description || !firstAider || !materialList || !usedMaterial) {
+            response.status(400).json({ error: "kitId, occurredAt, description, firstAider, materialList und usedMaterial sind erforderlich" });
             return;
         }
 
@@ -47,7 +47,7 @@ export async function entryCreate(request: Request, response: Response) {
             measures: measures ? String(measures).trim() : null,
             materialList: String(materialList).trim(),
             usedMaterial: String(usedMaterial).trim(),
-            witness: String(witness).trim()
+            witness: witness? String(witness).trim() : null
         });
 
         const savedEntry = await entryRepository.save(entry);
