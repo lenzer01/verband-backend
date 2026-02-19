@@ -6,6 +6,7 @@ import morgan from "morgan";
 import { entryRouter } from "./routes/entryRoutes";
 import { authRouter } from "./routes/authRoutes";
 import { userRouter } from "./routes/userRoutes";
+import { firstAidKitRouter } from "./routes/firstAidKitRoutes";
 
 export function createApp() {
   const app = express();
@@ -21,6 +22,7 @@ export function createApp() {
 
   // Routes
   app.use("/entry", entryRouter);
+  app.use("/first-aid-kit", firstAidKitRouter);
   app.use("/auth", authRouter);
   app.use("/user", userRouter);
 
