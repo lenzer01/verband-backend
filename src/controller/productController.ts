@@ -109,7 +109,7 @@ export async function productUpdate(request: Request, response: Response) {
         }
 
         const productId = Array.isArray(request.params.id) ? request.params.id[0] : request.params.id;
-        if (!productId) {
+        if (!productId || !isValidUUID(productId)) {
             response.status(400).json({ error: "Ungültige ID" });
             return;
         }

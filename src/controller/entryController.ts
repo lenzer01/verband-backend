@@ -180,7 +180,7 @@ export async function entryUpdate(request: Request, response: Response) {
         }
 
         const entryId = Array.isArray(request.params.id) ? request.params.id[0] : request.params.id;
-        if (!entryId) {
+        if (!entryId || !isValidUUID(entryId)) {
             response.status(400).json({ error: "Ungültige ID" });
             return;
         }

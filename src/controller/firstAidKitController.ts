@@ -79,7 +79,7 @@ export async function firstAidKitCreate(request: Request, response: Response) {
 export async function firstAidKitUpdate(request: Request, response: Response) {
     try {
         const idParam = Array.isArray(request.params.id) ? request.params.id[0] : request.params.id;
-        if (!idParam) {
+        if (!idParam || !isValidUUID(idParam)) {
             response.status(400).json({ error: "Ungueltige ID" });
             return;
         }
