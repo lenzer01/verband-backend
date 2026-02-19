@@ -12,6 +12,21 @@ Content-Type: application/json
 }
 ```
 
+### Registrierung als Admin
+```
+POST /auth/register
+Content-Type: application/json
+
+{
+  "name": "Max Mustermann",
+  "email": "max@example.com",
+  "password": "geheimesPasswort123",
+  "adminKey": "<ADMIN_KEY>"
+}
+```
+
+> **Hinweis:** Ohne `adminKey` wird ein normaler Benutzer (REPORTER) erstellt. Mit gültigem `adminKey` erhält der Benutzer die Rolle ADMIN.
+
 ## Login
 ```
 POST /auth/login

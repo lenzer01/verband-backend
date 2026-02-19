@@ -7,14 +7,21 @@ import * as userService from "../service/userService";
  */
 export async function authRegister(req: Request, res: Response): Promise<void> {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, adminKey } = req.body;
 
         if (!name || !email || !password) {
             res.status(400).json({ error: "Name, Email und Passwort sind erforderlich" });
             return;
         }
 
-        const user = await userService.createUser(name, email, password, true);
+        const isAdmin = !!adminKey && adminKey === process.env.ADMIN_KEY;
+
+        if (adminKey && !isAdmin) {
+            res.status(403).json({ error: "Ungültiger Admin-Key" });
+            return;
+        }
+
+        const user = await userService.createUser(name, email, password, isAdmin);
 
         const { passwordHash, ...userWithoutPassword } = user;
         res.status(201).json({

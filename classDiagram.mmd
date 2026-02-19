@@ -1,0 +1,115 @@
+classDiagram
+
+namespace Entities {
+    class User {
+        +number id
+        +string name
+        +string email
+        +string passwordHash
+        +UserRole role
+    }
+
+    class FirstAidKit {
+        +string id
+        +string code
+        +string location
+        +Date createdAt
+    }
+
+    class Entry {
+        +string id
+        +Date occurredAt
+        +string incident
+        +string firstAider
+        +string description
+        +string materialList
+        +string usedMaterial
+        +string? measures
+        +string? witness
+    }
+
+    class EntryItem {
+        +string id
+        +number qty
+    }
+
+    class Product {
+        +string id
+        +string name
+    }
+
+    class KitProduct {
+        +string id
+        +number targetQty
+        +number currentQty
+        +Date updatedAt
+    }
+}
+
+namespace Auth {
+    class UserRole {
+        <<enumeration>>
+        REPORTER
+        ADMIN
+    }
+
+    class AuthPayload {
+        +number userId
+        +UserRole role
+    }
+
+    class AuthMiddleware {
+        +authenticate(req, res, next) void
+        +authorize(...roles) Middleware
+    }
+}
+
+namespace Services {
+    class UserService {
+        +createUser(name, email, password, isAdmin) User
+        +login(email, password) LoginResult
+        +getUser(id?) User | User[]
+        +deleteUser(id) void
+        +verifyToken(token) AuthPayload
+    }
+}
+
+namespace Controller {
+    class AuthController {
+        +authRegister(req, res) void
+        +authLogin(req, res) void
+    }
+
+    class UserController {
+        +userGetAll(req, res) void
+        +userGet(req, res) void
+        +userDelete(req, res) void
+    }
+
+    class EntryController {
+        +entryCreate(req, res) void
+        +entryGetAll(req, res) void
+        +entryGet(req, res) void
+        +entryUpdate(req, res) void
+        +entryDelete(req, res) void
+    }
+}
+
+%% ─── Entity Relationships ───────────────────────────────────
+User "1" --> "0..*" Entry : creates
+FirstAidKit "1" --> "0..*" Entry : contains
+Entry "1" --> "0..*" EntryItem : has
+EntryItem --> Product : references
+FirstAidKit "1" --> "0..*" KitProduct : manages
+KitProduct --> Product : references
+
+%% ─── Layer Dependencies ──────────────────────────────────────
+AuthController ..> UserService : uses
+UserController ..> UserService : uses
+EntryController ..> UserService : uses
+
+AuthMiddleware ..> UserService : verifyToken
+AuthMiddleware ..> AuthPayload : produces
+
+UserService ..> AuthPayload : returns
+User --> UserRole : has
