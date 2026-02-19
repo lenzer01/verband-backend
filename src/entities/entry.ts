@@ -32,9 +32,6 @@ export class Entry {
   @Column({ type: "text", nullable: true })
   measures?: string | null;
 
-  @CreateDateColumn({ type: "timestamptz" })
-  createdAt!: Date;
-
   // Materialliste
   @Column({type: "text"})
   materialList!: string;

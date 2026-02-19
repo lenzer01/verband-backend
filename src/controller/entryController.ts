@@ -79,12 +79,12 @@ export async function entryGetAll(request: Request, response: Response) {
             request.user.role === UserRole.ADMIN
                 ? await entryRepository.find({
                       relations: { kit: true, createdBy: true },
-                      order: { createdAt: "DESC" }
+                      order: { occurredAt: "DESC" }
                   })
                 : await entryRepository.find({
                       where: { createdBy: { id: request.user.userId } },
                       relations: { kit: true, createdBy: true },
-                      order: { createdAt: "DESC" }
+                      order: { occurredAt: "DESC" }
                   });
 
         response.status(200).json(result);
