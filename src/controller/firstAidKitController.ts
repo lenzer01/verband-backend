@@ -4,6 +4,11 @@ import { FirstAidKit } from "../entities/firstAidKit";
 
 const firstAidKitRepository = AppDataSource.getRepository(FirstAidKit);
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function isValidUUID(id: string): boolean {
+    return UUID_REGEX.test(id);
+}
+
 /**
  * GET /firstAidKit - Alle Verbandkästen abrufen
  */
@@ -110,7 +115,7 @@ export async function firstAidKitUpdate(request: Request, response: Response) {
 export async function firstAidKitDelete(request: Request, response: Response) {
     try {
         const idParam = Array.isArray(request.params.id) ? request.params.id[0] : request.params.id;
-        if (!idParam) {
+        if (!idParam || !isValidUUID(idParam)) {
             response.status(400).json({ error: "Ungueltige ID" });
             return;
         }

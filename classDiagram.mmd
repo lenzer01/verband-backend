@@ -22,10 +22,16 @@ namespace Entities {
         +string incident
         +string firstAider
         +string description
-        +string materialList
-        +string usedMaterial
         +string? measures
+        +MaterialItem[] materialList
+        +string? message
         +string? witness
+    }
+
+    class MaterialItem {
+        <<interface>>
+        +string type
+        +number quantity
     }
 
     class EntryItem {
@@ -105,8 +111,10 @@ namespace Controller {
 
 %% ─── Entity Relationships ───────────────────────────────────
 User "1" --> "0..*" Entry : creates
+User --> UserRole : has
 FirstAidKit "1" --> "0..*" Entry : contains
 Entry "1" --> "0..*" EntryItem : has
+Entry "1" --> "0..*" MaterialItem : contains
 EntryItem --> Product : references
 FirstAidKit "1" --> "0..*" KitProduct : manages
 KitProduct --> Product : references
