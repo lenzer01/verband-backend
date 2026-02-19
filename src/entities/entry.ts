@@ -24,6 +24,9 @@ export class Entry {
   @Column({ type: "text" })
   incident!: string;
 
+  @Column({type: "text"})
+  firstAider!: string;
+
   // Hergang
   @Column({ type: "text" })
   description!: string;

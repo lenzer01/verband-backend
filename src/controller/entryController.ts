@@ -18,7 +18,7 @@ export async function entryCreate(request: Request, response: Response) {
             return;
         }
 
-        const { kitId, occurredAt, incident, description, measures, materialList, usedMaterial, witness } = request.body;
+        const { kitId, occurredAt, incident, description, firstAider, measures, materialList, usedMaterial, witness } = request.body;
 
         if (!kitId || !occurredAt || !description) {
             response.status(400).json({ error: "kitId, occurredAt und description sind erforderlich" });
@@ -43,6 +43,7 @@ export async function entryCreate(request: Request, response: Response) {
             occurredAt: occurredAtDate,
             incident: String(incident).trim(),
             description: String(description).trim(),
+            firstAider: String(firstAider).trim(),
             measures: measures ? String(measures).trim() : null,
             materialList: String(materialList).trim(),
             usedMaterial: String(usedMaterial).trim(),
