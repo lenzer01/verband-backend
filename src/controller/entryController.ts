@@ -7,6 +7,11 @@ import { UserRole } from "../entities/user";
 const entryRepository = AppDataSource.getRepository(Entry);
 const firstAidKitRepository = AppDataSource.getRepository(FirstAidKit);
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function isValidUUID(id: string): boolean {
+    return UUID_REGEX.test(id);
+}
+
 /**
  * POST /entry
  * Erstellt einen neuen Eintrag
@@ -18,10 +23,20 @@ export async function entryCreate(request: Request, response: Response) {
             return;
         }
 
-        const { kitId, occurredAt, incident, description, firstAider, measures, materialList, usedMaterial, witness } = request.body;
+        const { kitId, occurredAt, incident, description, firstAider, measures, materialList, message, witness } = request.body;
 
-        if (!kitId || !occurredAt || !description || !firstAider || !materialList || !usedMaterial) {
-            response.status(400).json({ error: "kitId, occurredAt, description, firstAider, materialList und usedMaterial sind erforderlich" });
+        if (!kitId || !occurredAt || !description || !firstAider || !materialList) {
+            response.status(400).json({ error: "kitId, occurredAt, description, firstAider und materialList sind erforderlich" });
+            return;
+        }
+
+        if (!isValidUUID(kitId)) {
+            response.status(400).json({ error: "Ungültige kitId" });
+            return;
+        }
+
+        if (!Array.isArray(materialList)) {
+            response.status(400).json({ error: "materialList muss ein Array sein" });
             return;
         }
 
@@ -45,9 +60,9 @@ export async function entryCreate(request: Request, response: Response) {
             description: String(description).trim(),
             firstAider: String(firstAider).trim(),
             measures: measures ? String(measures).trim() : null,
-            materialList: String(materialList).trim(),
-            usedMaterial: String(usedMaterial).trim(),
-            witness: witness? String(witness).trim() : null
+            materialList: materialList,
+            message: message ? String(message).trim() : null,
+            witness: witness ? String(witness).trim() : null
         });
 
         const savedEntry = await entryRepository.save(entry);
@@ -55,6 +70,11 @@ export async function entryCreate(request: Request, response: Response) {
             where: { id: savedEntry.id },
             relations: { kit: true, createdBy: true }
         });
+
+        if (result?.createdBy) {
+            const { passwordHash, ...userWithoutPassword } = result.createdBy;
+            (result as any).createdBy = userWithoutPassword;
+        }
 
         response.status(201).json({
             message: "Eintrag erfolgreich erstellt",
@@ -88,7 +108,15 @@ export async function entryGetAll(request: Request, response: Response) {
                       order: { occurredAt: "DESC" }
                   });
 
-        response.status(200).json(result);
+        const sanitizedResult = result.map(entry => {
+            if (entry.createdBy) {
+                const { passwordHash, ...userWithoutPassword } = entry.createdBy;
+                return { ...entry, createdBy: userWithoutPassword };
+            }
+            return entry;
+        });
+
+        response.status(200).json(sanitizedResult);
     } catch (error) {
         response.status(500).json({ error: "Interner Serverfehler" });
     }
@@ -100,6 +128,7 @@ export async function entryGetAll(request: Request, response: Response) {
  */
 export async function entryGet(request: Request, response: Response) {
     try {
+        // 1. Token vorhanden?
         if (!request.user?.userId || !request.user.role) {
             response.status(401).json({ error: "Authentifizierung erforderlich" });
             return;
@@ -111,23 +140,34 @@ export async function entryGet(request: Request, response: Response) {
             return;
         }
 
+        // 2. Admin?
+        const isAdmin = request.user.role === UserRole.ADMIN;
+
         const result = await entryRepository.findOne({
             where: { id: entryId },
             relations: { kit: true, createdBy: true }
         });
+
+        // 3. Owner?
+        const isOwner = result?.createdBy?.id === request.user.userId;
+
+        if (!isAdmin && !isOwner) {
+            response.status(403).json({ error: "Keine Berechtigung für diese Aktion" });
+            return;
+        }
 
         if (!result) {
             response.status(404).json({ error: "Eintrag nicht gefunden" });
             return;
         }
 
-        if (request.user.role !== UserRole.ADMIN && result.createdBy.id !== request.user.userId) {
-            response.status(403).json({ error: "Keine Berechtigung für diese Aktion" });
-            return;
-        }
+        // 4. Logik
+        const { passwordHash, ...userWithoutPassword } = result.createdBy;
+        const sanitizedResult = { ...result, createdBy: userWithoutPassword };
 
-        response.status(200).json(result);
+        response.status(200).json(sanitizedResult);
     } catch (error) {
+        console.error("entryGet error:", error);
         response.status(500).json({ error: "Interner Serverfehler" });
     }
 }
@@ -138,6 +178,7 @@ export async function entryGet(request: Request, response: Response) {
  */
 export async function entryUpdate(request: Request, response: Response) {
     try {
+        // 1. Token vorhanden?
         if (!request.user?.userId || !request.user.role) {
             response.status(401).json({ error: "Authentifizierung erforderlich" });
             return;
@@ -149,22 +190,29 @@ export async function entryUpdate(request: Request, response: Response) {
             return;
         }
 
+        // 2. Admin?
+        const isAdmin = request.user.role === UserRole.ADMIN;
+
         const entry = await entryRepository.findOne({
             where: { id: entryId },
             relations: { kit: true, createdBy: true }
         });
+
+        // 3. Owner?
+        const isOwner = entry?.createdBy?.id === request.user.userId;
+
+        if (!isAdmin && !isOwner) {
+            response.status(403).json({ error: "Keine Berechtigung für diese Aktion" });
+            return;
+        }
 
         if (!entry) {
             response.status(404).json({ error: "Eintrag nicht gefunden" });
             return;
         }
 
-        if (request.user.role !== UserRole.ADMIN && entry.createdBy.id !== request.user.userId) {
-            response.status(403).json({ error: "Keine Berechtigung für diese Aktion" });
-            return;
-        }
-
-        const { kitId, occurredAt, description, measures } = request.body;
+        // 4. Logik
+        const { kitId, occurredAt, description, measures, materialList, message } = request.body;
         if (kitId !== undefined) {
             const kit = await firstAidKitRepository.findOne({ where: { id: kitId } });
             if (!kit) {
@@ -196,7 +244,24 @@ export async function entryUpdate(request: Request, response: Response) {
             entry.measures = measures === null ? null : String(measures).trim();
         }
 
+        if (materialList !== undefined) {
+            if (!Array.isArray(materialList)) {
+                response.status(400).json({ error: "materialList muss ein Array sein" });
+                return;
+            }
+            entry.materialList = materialList;
+        }
+
+        if (message !== undefined) {
+            entry.message = message === null ? null : String(message).trim();
+        }
+
         const result = await entryRepository.save(entry);
+
+        if (result.createdBy) {
+            const { passwordHash, ...userWithoutPassword } = result.createdBy;
+            (result as any).createdBy = userWithoutPassword;
+        }
 
         response.status(200).json({
             message: "Eintrag erfolgreich aktualisiert",
@@ -213,35 +278,44 @@ export async function entryUpdate(request: Request, response: Response) {
  */
 export async function entryDelete(request: Request, response: Response) {
     try {
+        // 1. Token vorhanden?
         if (!request.user?.userId || !request.user.role) {
             response.status(401).json({ error: "Authentifizierung erforderlich" });
             return;
         }
 
         const entryId = Array.isArray(request.params.id) ? request.params.id[0] : request.params.id;
-        if (!entryId) {
+        if (!entryId || !isValidUUID(entryId)) {
             response.status(400).json({ error: "Ungültige ID" });
             return;
         }
+
+        // 2. Admin?
+        const isAdmin = request.user.role === UserRole.ADMIN;
 
         const entry = await entryRepository.findOne({
             where: { id: entryId },
             relations: { createdBy: true }
         });
 
+        // 3. Owner?
+        const isOwner = entry?.createdBy?.id === request.user.userId;
+
+        if (!isAdmin && !isOwner) {
+            response.status(403).json({ error: "Keine Berechtigung für diese Aktion" });
+            return;
+        }
+
         if (!entry) {
             response.status(404).json({ error: "Eintrag nicht gefunden" });
             return;
         }
 
-        if (request.user.role !== UserRole.ADMIN && entry.createdBy.id !== request.user.userId) {
-            response.status(403).json({ error: "Keine Berechtigung für diese Aktion" });
-            return;
-        }
-
+        // 4. Logik
         await entryRepository.remove(entry);
         response.status(200).json({ message: "Eintrag erfolgreich gelöscht" });
     } catch (error) {
+        console.error("entryDelete error:", error);
         response.status(500).json({ error: "Interner Serverfehler" });
     }
 }

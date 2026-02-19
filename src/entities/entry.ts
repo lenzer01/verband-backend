@@ -1,6 +1,11 @@
-import { Column, CreateDateColumn, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { FirstAidKit } from "./firstAidKit";
 import { User } from "./user";
+
+export interface MaterialItem {
+  type: string;
+  quantity: number;
+}
 
 @Entity({ name: "entries" })
 export class Entry {
@@ -31,17 +36,17 @@ export class Entry {
   @Column({ type: "text" })
   description!: string;
 
-  // Zeuge
+  // Maßnahmen
   @Column({ type: "text", nullable: true })
   measures?: string | null;
 
-  // Materialliste
-  @Column({type: "text"})
-  materialList!: string;
+  // Materialliste als JSON
+  @Column({ type: "jsonb", default: [] })
+  materialList!: MaterialItem[];
 
-  // Entnommenes Material
-  @Column({type: "text"})
-  usedMaterial!: string;
+  // Nachricht an den Gesundheitsbeauftragten
+  @Column({ type: "text", nullable: true })
+  message?: string | null;
 
   // Zeuge
   @Column({ type: "text", nullable: true })
