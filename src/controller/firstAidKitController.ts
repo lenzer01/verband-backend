@@ -5,7 +5,7 @@ import { FirstAidKit } from "../entities/firstAidKit";
 const firstAidKitRepository = AppDataSource.getRepository(FirstAidKit);
 
 /**
- * GET /first-aid-kit - Alle Verbandkästen abrufen
+ * GET /firstAidKit - Alle Verbandkästen abrufen
  */
 export async function firstAidKitGetAll(request: Request, response: Response) {
     try {
@@ -20,7 +20,7 @@ export async function firstAidKitGetAll(request: Request, response: Response) {
 }
 
 /**
- * GET /first-aid-kit/:id - Einzelnen Verbandkästen abrufen
+ * GET /firstAidKit/:id - Einzelnen Verbandkästen abrufen
  */
 export async function firstAidKitGet(request: Request, response: Response) {
     try {
@@ -43,7 +43,7 @@ export async function firstAidKitGet(request: Request, response: Response) {
 }
 
 /**
- * POST /first-aid-kit - Neuen Verbandkästen erstellen (nur Admins)
+ * POST /firstAidKit - Neuen Verbandkästen erstellen (nur Admins)
  */
 export async function firstAidKitCreate(request: Request, response: Response) {
     try {
@@ -69,7 +69,7 @@ export async function firstAidKitCreate(request: Request, response: Response) {
 }
 
 /**
- * PUT /first-aid-kit/:id - Verbandkästen aktualisieren (nur Admins)
+ * PUT /firstAidKit/:id - Verbandkästen aktualisieren (nur Admins)
  */
 export async function firstAidKitUpdate(request: Request, response: Response) {
     try {
@@ -105,7 +105,7 @@ export async function firstAidKitUpdate(request: Request, response: Response) {
 }
 
 /**
- * DELETE /first-aid-kit/:id - Verbandkästen löschen (nur Admins)
+ * DELETE /firstAidKit/:id - Verbandkästen löschen (nur Admins)
  */
 export async function firstAidKitDelete(request: Request, response: Response) {
     try {

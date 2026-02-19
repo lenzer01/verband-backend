@@ -150,3 +150,63 @@ Authorization: Bearer <JWT_TOKEN>
 
 > **Hinweis:** Reporter können nur ihre eigenen Einträge löschen.
 
+---
+
+## Verbandkasten erstellen (nur Admin)
+```
+POST /firstAidKit
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+
+{
+  "code": "KASTEN-001",
+  "location": "Werkstatt Raum 101"
+}
+```
+
+> **Pflichtfelder:** `code`, `location`
+
+**Antwort:**
+```json
+{
+  "message": "Verbandkasten erfolgreich erstellt",
+  "firstAidKit": {
+    "id": "8e53b6aa-61c1-4f9b-9f6f-8d9f91d4d3e1",
+    "code": "KASTEN-001",
+    "location": "Werkstatt Raum 101",
+    "createdAt": "2026-02-19T10:30:00.000Z"
+  }
+}
+```
+
+## Alle Verbandkaesten abrufen
+```
+GET /firstAidKit
+Authorization: Bearer <JWT_TOKEN>
+```
+
+## Einzelnen Verbandkasten abrufen
+```
+GET /firstAidKit/8e53b6aa-61c1-4f9b-9f6f-8d9f91d4d3e1
+Authorization: Bearer <JWT_TOKEN>
+```
+
+## Verbandkasten aktualisieren (nur Admin)
+```
+PUT /firstAidKit/8e53b6aa-61c1-4f9b-9f6f-8d9f91d4d3e1
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+
+{
+  "location": "Werkstatt Raum 102"
+}
+```
+
+> **Aktualisierbare Felder:** `code`, `location`
+
+## Verbandkasten loeschen (nur Admin)
+```
+DELETE /firstAidKit/8e53b6aa-61c1-4f9b-9f6f-8d9f91d4d3e1
+Authorization: Bearer <JWT_TOKEN>
+```
+

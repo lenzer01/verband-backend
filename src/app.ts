@@ -22,7 +22,7 @@ export function createApp() {
 
   // Routes
   app.use("/entry", entryRouter);
-  app.use("/first-aid-kit", firstAidKitRouter);
+  app.use("/firstAidKit", firstAidKitRouter);
   app.use("/auth", authRouter);
   app.use("/user", userRouter);
 

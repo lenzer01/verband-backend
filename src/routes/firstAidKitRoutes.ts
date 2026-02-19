@@ -10,17 +10,17 @@ import { adminOnly, authenticate } from "../middleware/authMiddleware";
 
 export const firstAidKitRouter = Router();
 
-// GET /first-aid-kit - Alle Verbandkaesten abrufen
+// GET /firstAidKit - Alle Verbandkaesten abrufen
 firstAidKitRouter.get("/", authenticate, firstAidKitGetAll);
 
-// GET /first-aid-kit/:id - Einzelnen Verbandkasten abrufen
+// GET /firstAidKit/:id - Einzelnen Verbandkasten abrufen
 firstAidKitRouter.get("/:id", authenticate, firstAidKitGet);
 
-// POST /first-aid-kit - Neuen Verbandkasten erstellen (nur Admins)
+// POST /firstAidKit - Neuen Verbandkasten erstellen (nur Admins)
 firstAidKitRouter.post("/", authenticate, adminOnly, firstAidKitCreate);
 
-// PUT /first-aid-kit/:id - Verbandkasten aktualisieren (nur Admins)
+// PUT /firstAidKit/:id - Verbandkasten aktualisieren (nur Admins)
 firstAidKitRouter.put("/:id", authenticate, adminOnly, firstAidKitUpdate);
 
-// DELETE /first-aid-kit/:id - Verbandkasten loeschen (nur Admins)
+// DELETE /firstAidKit/:id - Verbandkasten loeschen (nur Admins)
 firstAidKitRouter.delete("/:id", authenticate, adminOnly, firstAidKitDelete);
