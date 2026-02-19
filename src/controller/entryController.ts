@@ -128,7 +128,6 @@ export async function entryGetAll(request: Request, response: Response) {
  */
 export async function entryGet(request: Request, response: Response) {
     try {
-        // 1. Token vorhanden?
         if (!request.user?.userId || !request.user.role) {
             response.status(401).json({ error: "Authentifizierung erforderlich" });
             return;
@@ -140,7 +139,6 @@ export async function entryGet(request: Request, response: Response) {
             return;
         }
 
-        // 2. Admin?
         const isAdmin = request.user.role === UserRole.ADMIN;
 
         const result = await entryRepository.findOne({
@@ -148,7 +146,6 @@ export async function entryGet(request: Request, response: Response) {
             relations: { kit: true, createdBy: true }
         });
 
-        // 3. Owner?
         const isOwner = result?.createdBy?.id === request.user.userId;
 
         if (!isAdmin && !isOwner) {
@@ -161,7 +158,6 @@ export async function entryGet(request: Request, response: Response) {
             return;
         }
 
-        // 4. Logik
         const { passwordHash, ...userWithoutPassword } = result.createdBy;
         const sanitizedResult = { ...result, createdBy: userWithoutPassword };
 
@@ -178,7 +174,6 @@ export async function entryGet(request: Request, response: Response) {
  */
 export async function entryUpdate(request: Request, response: Response) {
     try {
-        // 1. Token vorhanden?
         if (!request.user?.userId || !request.user.role) {
             response.status(401).json({ error: "Authentifizierung erforderlich" });
             return;
@@ -190,7 +185,6 @@ export async function entryUpdate(request: Request, response: Response) {
             return;
         }
 
-        // 2. Admin?
         const isAdmin = request.user.role === UserRole.ADMIN;
 
         const entry = await entryRepository.findOne({
@@ -198,7 +192,6 @@ export async function entryUpdate(request: Request, response: Response) {
             relations: { kit: true, createdBy: true }
         });
 
-        // 3. Owner?
         const isOwner = entry?.createdBy?.id === request.user.userId;
 
         if (!isAdmin && !isOwner) {
@@ -211,7 +204,6 @@ export async function entryUpdate(request: Request, response: Response) {
             return;
         }
 
-        // 4. Logik
         const { kitId, occurredAt, description, measures, materialList, message } = request.body;
         if (kitId !== undefined) {
             const kit = await firstAidKitRepository.findOne({ where: { id: kitId } });
@@ -278,7 +270,6 @@ export async function entryUpdate(request: Request, response: Response) {
  */
 export async function entryDelete(request: Request, response: Response) {
     try {
-        // 1. Token vorhanden?
         if (!request.user?.userId || !request.user.role) {
             response.status(401).json({ error: "Authentifizierung erforderlich" });
             return;
@@ -290,7 +281,6 @@ export async function entryDelete(request: Request, response: Response) {
             return;
         }
 
-        // 2. Admin?
         const isAdmin = request.user.role === UserRole.ADMIN;
 
         const entry = await entryRepository.findOne({
@@ -298,7 +288,6 @@ export async function entryDelete(request: Request, response: Response) {
             relations: { createdBy: true }
         });
 
-        // 3. Owner?
         const isOwner = entry?.createdBy?.id === request.user.userId;
 
         if (!isAdmin && !isOwner) {
@@ -311,7 +300,6 @@ export async function entryDelete(request: Request, response: Response) {
             return;
         }
 
-        // 4. Logik
         await entryRepository.remove(entry);
         response.status(200).json({ message: "Eintrag erfolgreich gelöscht" });
     } catch (error) {

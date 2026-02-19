@@ -34,22 +34,11 @@ namespace Entities {
         +number quantity
     }
 
-    class EntryItem {
-        +string id
-        +number qty
-    }
-
     class Product {
         +string id
-        +string name
+        +string type
     }
 
-    class KitProduct {
-        +string id
-        +number targetQty
-        +number currentQty
-        +Date updatedAt
-    }
 }
 
 namespace Auth {
@@ -101,23 +90,26 @@ namespace Controller {
     }
 
     class FirstAidKitController {
+        +firstAidKitCreate(req, res) void
         +firstAidKitGetAll(req, res) void
         +firstAidKitGet(req, res) void
-        +firstAidKitCreate(req, res) void
         +firstAidKitUpdate(req, res) void
         +firstAidKitDelete(req, res) void
+    }
+
+    class ProductController {
+        +productCreate(req, res) void
+        +productGetAll(req, res) void
+        +productGet(req, res) void
+        +productUpdate(req, res) void
+        +productDelete(req, res) void
     }
 }
 
 %% ─── Entity Relationships ───────────────────────────────────
 User "1" --> "0..*" Entry : creates
-User --> UserRole : has
 FirstAidKit "1" --> "0..*" Entry : contains
-Entry "1" --> "0..*" EntryItem : has
 Entry "1" --> "0..*" MaterialItem : contains
-EntryItem --> Product : references
-FirstAidKit "1" --> "0..*" KitProduct : manages
-KitProduct --> Product : references
 
 %% ─── Layer Dependencies ──────────────────────────────────────
 AuthController ..> UserService : uses
@@ -125,6 +117,7 @@ UserController ..> UserService : uses
 UserController ..> User : manages
 EntryController ..> Entry : manages
 FirstAidKitController ..> FirstAidKit : manages
+ProductController ..> Product : manages
 
 AuthMiddleware ..> UserService : verifyToken
 AuthMiddleware ..> AuthPayload : produces

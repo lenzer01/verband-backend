@@ -221,3 +221,60 @@ DELETE /firstAidKit/8e53b6aa-61c1-4f9b-9f6f-8d9f91d4d3e1
 Authorization: Bearer <JWT_TOKEN>
 ```
 
+---
+
+## Produkt erstellen (nur Admin)
+```
+POST /product
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+
+{
+  "type": "Pflaster"
+}
+```
+
+> **Pflichtfelder:** `type`
+
+**Antwort:**
+```json
+{
+  "message": "Produkt erfolgreich erstellt",
+  "product": {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "type": "Pflaster"
+  }
+}
+```
+
+## Alle Produkte abrufen
+```
+GET /product
+Authorization: Bearer <JWT_TOKEN>
+```
+
+## Einzelnes Produkt abrufen
+```
+GET /product/a1b2c3d4-e5f6-7890-abcd-ef1234567890
+Authorization: Bearer <JWT_TOKEN>
+```
+
+## Produkt aktualisieren (nur Admin)
+```
+PUT /product/a1b2c3d4-e5f6-7890-abcd-ef1234567890
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+
+{
+  "type": "Kompresse"
+}
+```
+
+> **Aktualisierbare Felder:** `type`
+
+## Produkt loeschen (nur Admin)
+```
+DELETE /product/a1b2c3d4-e5f6-7890-abcd-ef1234567890
+Authorization: Bearer <JWT_TOKEN>
+```
+

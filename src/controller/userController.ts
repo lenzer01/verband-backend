@@ -33,7 +33,6 @@ export async function userGet(request: Request, response: Response) {
             return;
         }
 
-        // Prüfe ob User sich selbst abfragt oder Admin ist
         if (request.user?.role !== UserRole.ADMIN && request.user?.userId !== id) {
             response.status(403).json({ error: "Keine Berechtigung für diese Aktion" });
             return;

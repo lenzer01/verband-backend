@@ -8,7 +8,6 @@ import { FirstAidKit } from "../entities/firstAidKit";
 import { Product } from "../entities/product";
 import { KitProduct } from "../entities/kitProduct";
 import { Entry } from "../entities/entry";
-import { EntryItem } from "../entities/entryItem";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -18,7 +17,7 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
 
-  entities: [User, FirstAidKit, Product, KitProduct, Entry, EntryItem],
+  entities: [User, FirstAidKit, Product, KitProduct, Entry],
 
   migrations: ["src/db/migrations/*.{ts,js}"],
 

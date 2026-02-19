@@ -6,6 +6,7 @@ import morgan from "morgan";
 import { entryRouter } from "./routes/entryRoutes";
 import { authRouter } from "./routes/authRoutes";
 import { userRouter } from "./routes/userRoutes";
+import { productRouter } from "./routes/productRoutes";
 import { firstAidKitRouter } from "./routes/firstAidKitRoutes";
 
 export function createApp() {
@@ -25,6 +26,7 @@ export function createApp() {
   app.use("/firstAidKit", firstAidKitRouter);
   app.use("/auth", authRouter);
   app.use("/user", userRouter);
+  app.use("/product", productRouter);
 
   return app;
 }
