@@ -45,7 +45,7 @@ export async function entryCreate(request: Request, response: Response) {
             description: String(description).trim(),
             measures: measures ? String(measures).trim() : null,
             materialList: String(materialList).trim(),
-            usedMaterial: String(materialList).trim(),
+            usedMaterial: String(usedMaterial).trim(),
             witness: String(witness).trim()
         });
 
