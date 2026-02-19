@@ -76,14 +76,17 @@ Content-Type: application/json
   "description": "Schnittverletzung am Finger in der Werkstatt",
   "firstAider": "Max Mustermann",
   "measures": "Wunde gereinigt und Pflaster angebracht",
-  "materialList": "Pflaster, Desinfektionsmittel",
-  "usedMaterial": "1x Pflaster, 1x Desinfektionsmittel",
+  "materialList": [
+    { "type": "Pflaster", "quantity": 1 },
+    { "type": "Desinfektionsmittel", "quantity": 1 }
+  ],
+  "message": "Pflasterbestand ist niedrig",
   "witness": "Erika Musterfrau"
 }
 ```
 
-> **Pflichtfelder:** `kitId`, `occurredAt`, `description`  
-> **Optionale Felder:** `incident`, `firstAider`, `measures`, `materialList`, `usedMaterial`, `witness`
+> **Pflichtfelder:** `kitId`, `occurredAt`, `description`, `firstAider`, `materialList`  
+> **Optionale Felder:** `incident`, `measures`, `message`, `witness`
 
 **Antwort:**
 ```json
@@ -96,8 +99,11 @@ Content-Type: application/json
     "description": "Schnittverletzung am Finger in der Werkstatt",
     "firstAider": "Max Mustermann",
     "measures": "Wunde gereinigt und Pflaster angebracht",
-    "materialList": "Pflaster, Desinfektionsmittel",
-    "usedMaterial": "1x Pflaster, 1x Desinfektionsmittel",
+    "materialList": [
+      { "type": "Pflaster", "quantity": 1 },
+      { "type": "Desinfektionsmittel", "quantity": 1 }
+    ],
+    "message": "Pflasterbestand ist niedrig",
     "witness": "Erika Musterfrau",
     "kit": {
       "id": "8e53b6aa-61c1-4f9b-9f6f-8d9f91d4d3e1"
@@ -136,11 +142,16 @@ Content-Type: application/json
 
 {
   "description": "Schnittverletzung am Finger beim Schneiden",
-  "measures": "Wunde gereinigt, desinfiziert und Pflaster angebracht"
+  "measures": "Wunde gereinigt, desinfiziert und Pflaster angebracht",
+  "materialList": [
+    { "type": "Pflaster", "quantity": 2 },
+    { "type": "Desinfektionsmittel", "quantity": 1 }
+  ],
+  "message": "Pflasterbestand aufgefüllt"
 }
 ```
 
-> **Aktualisierbare Felder:** `kitId`, `occurredAt`, `description`, `measures`
+> **Aktualisierbare Felder:** `kitId`, `occurredAt`, `description`, `measures`, `materialList`, `message`
 
 ## Eintrag loeschen
 ```
