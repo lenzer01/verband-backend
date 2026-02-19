@@ -17,8 +17,8 @@ const passwordSchema = z
     .regex(/[0-9]/, "Passwort muss mindestens eine Zahl enthalten");
 
 const SALT_ROUNDS = 10;
-const JWT_SECRET = "jwtSecretKey"; // TODO: bitte bedenken, der soll in irgendeine art von environment variable
-const JWT_EXPIRES_IN = "24h";
+const JWT_SECRET = process.env.JWT_SECRET!;
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN!;
 
 export interface AuthPayload {
     userId: number;
