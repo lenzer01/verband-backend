@@ -1,0 +1,912 @@
+openapi: 3.0.3
+info:
+  title: Digitales Verbandsbuch – API
+  description: |
+    REST-API für das Digitale Verbandsbuch.
+    Ermöglicht die Verwaltung von Erste-Hilfe-Vorfällen, Verbandkästen, Produkten und Benutzern.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Lokale Entwicklung
+  - url: http://verbandbuch.bbz-rd-eck.com:4000
+    description: Produktion
+
+tags:
+  - name: Auth
+    description: Authentifizierung & Registrierung
+  - name: User
+    description: Benutzerverwaltung
+  - name: Entry
+    description: Verbandsbuch-Einträge
+  - name: FirstAidKit
+    description: Verbandkästen
+  - name: Product
+    description: Produkte / Materialarten
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Authentifizierung erforderlich"
+
+    # ── Auth ──────────────────────────────────────────────
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: "max@mustermann.com"
+        password:
+          type: string
+          example: "geheimesPasswort123"
+
+    LoginResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Login erfolgreich"
+        user:
+          $ref: "#/components/schemas/UserPublic"
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIs..."
+
+    RegisterRequest:
+      type: object
+      required: [name, email, password]
+      properties:
+        name:
+          type: string
+          example: "Max Mustermann"
+        email:
+          type: string
+          format: email
+          example: "max@mustermann.com"
+        password:
+          type: string
+          example: "geheimesPasswort123"
+        role:
+          type: string
+          enum: [REPORTER, ADMIN]
+          default: REPORTER
+
+    RegisterResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Registrierung erfolgreich"
+        user:
+          $ref: "#/components/schemas/UserPublic"
+
+    # ── User ──────────────────────────────────────────────
+    UserPublic:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Max Mustermann"
+        email:
+          type: string
+          format: email
+          example: "max@mustermann.com"
+        role:
+          type: string
+          enum: [REPORTER, ADMIN]
+          example: "REPORTER"
+
+    # ── Entry ─────────────────────────────────────────────
+    MaterialItem:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "Pflaster"
+        quantity:
+          type: integer
+          example: 1
+
+    EntryCreate:
+      type: object
+      required: [kitId, occurredAt, description, firstAider, materialList]
+      properties:
+        kitId:
+          type: string
+          format: uuid
+          example: "f9ec2188-288e-44c5-9043-8f267fc5004b"
+        occurredAt:
+          type: string
+          format: date-time
+          example: "2026-02-12T08:30:00.000Z"
+        incident:
+          type: string
+          example: "Schnittverletzung"
+        description:
+          type: string
+          example: "Schnittverletzung am Finger in der Werkstatt"
+        firstAider:
+          type: string
+          example: "Max Mustermann"
+        measures:
+          type: string
+          nullable: true
+          example: "Wunde gereinigt und Pflaster angebracht"
+        materialList:
+          type: array
+          items:
+            $ref: "#/components/schemas/MaterialItem"
+        message:
+          type: string
+          nullable: true
+          example: "Pflasterbestand ist niedrig"
+        witness:
+          type: string
+          nullable: true
+          example: "Erika Musterfrau"
+
+    EntryUpdate:
+      type: object
+      properties:
+        kitId:
+          type: string
+          format: uuid
+        occurredAt:
+          type: string
+          format: date-time
+        description:
+          type: string
+        measures:
+          type: string
+          nullable: true
+        materialList:
+          type: array
+          items:
+            $ref: "#/components/schemas/MaterialItem"
+        message:
+          type: string
+          nullable: true
+
+    Entry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        occurredAt:
+          type: string
+          format: date-time
+        incident:
+          type: string
+        firstAider:
+          type: string
+        description:
+          type: string
+        measures:
+          type: string
+          nullable: true
+        materialList:
+          type: array
+          items:
+            $ref: "#/components/schemas/MaterialItem"
+        message:
+          type: string
+          nullable: true
+        witness:
+          type: string
+          nullable: true
+        kit:
+          $ref: "#/components/schemas/FirstAidKit"
+        createdBy:
+          $ref: "#/components/schemas/UserPublic"
+
+    EntryCreateResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Eintrag erfolgreich erstellt"
+        entry:
+          $ref: "#/components/schemas/Entry"
+
+    EntryUpdateResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Eintrag erfolgreich aktualisiert"
+        entry:
+          $ref: "#/components/schemas/Entry"
+
+    # ── FirstAidKit ───────────────────────────────────────
+    FirstAidKitCreate:
+      type: object
+      required: [code, location]
+      properties:
+        code:
+          type: string
+          example: "KASTEN-001"
+        location:
+          type: string
+          example: "Werkstatt Raum 101"
+
+    FirstAidKitUpdate:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "KASTEN-002"
+        location:
+          type: string
+          example: "Werkstatt Raum 102"
+
+    FirstAidKit:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        code:
+          type: string
+          example: "KASTEN-001"
+        location:
+          type: string
+          example: "Werkstatt Raum 101"
+        createdAt:
+          type: string
+          format: date-time
+
+    FirstAidKitCreateResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Verbandkasten erfolgreich erstellt"
+        firstAidKit:
+          $ref: "#/components/schemas/FirstAidKit"
+
+    FirstAidKitUpdateResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Verbandkasten erfolgreich aktualisiert"
+        firstAidKit:
+          $ref: "#/components/schemas/FirstAidKit"
+
+    # ── Product ───────────────────────────────────────────
+    ProductCreate:
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+          example: "Mullbinde"
+
+    ProductUpdate:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "Kompresse"
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          example: "Mullbinde"
+
+    ProductCreateResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Produkt erfolgreich erstellt"
+        product:
+          $ref: "#/components/schemas/Product"
+
+    ProductUpdateResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Produkt erfolgreich aktualisiert"
+        product:
+          $ref: "#/components/schemas/Product"
+
+# ═══════════════════════════════════════════════════════════
+#  Pfade
+# ═══════════════════════════════════════════════════════════
+paths:
+
+  # ── Auth ────────────────────────────────────────────────
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Anmelden
+      description: Authentifiziert einen Benutzer und gibt ein JWT-Token zurück.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login erfolgreich
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          description: Fehlende Felder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Ungültige Anmeldedaten
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Benutzer registrieren (nur Admin)
+      description: Erstellt ein neues Benutzerkonto. Nur Admins dürfen neue Benutzer anlegen.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: Registrierung erfolgreich
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegisterResponse"
+        "400":
+          description: Fehlende Felder oder E-Mail bereits vergeben
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Nicht authentifiziert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ── User ────────────────────────────────────────────────
+  /user:
+    get:
+      tags: [User]
+      summary: Alle Benutzer abrufen (nur Admin)
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Liste aller Benutzer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserPublic"
+        "401":
+          description: Nicht authentifiziert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /user/{id}:
+    get:
+      tags: [User]
+      summary: Einzelnen Benutzer abrufen
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Benutzerdaten
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserPublic"
+        "404":
+          description: Benutzer nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags: [User]
+      summary: Benutzer löschen (nur Admin)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Benutzer gelöscht
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Benutzer erfolgreich gelöscht"
+        "404":
+          description: Benutzer nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ── Entry ───────────────────────────────────────────────
+  /entry:
+    get:
+      tags: [Entry]
+      summary: Einträge abrufen
+      description: Admins erhalten alle Einträge, Reporter nur ihre eigenen.
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Liste der Einträge
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Entry"
+        "401":
+          description: Nicht authentifiziert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags: [Entry]
+      summary: Neuen Eintrag erstellen
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EntryCreate"
+      responses:
+        "201":
+          description: Eintrag erstellt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntryCreateResponse"
+        "400":
+          description: Fehlende oder ungültige Felder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Verbandkasten nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /entry/{id}:
+    get:
+      tags: [Entry]
+      summary: Einzelnen Eintrag abrufen
+      description: Reporter können nur eigene Einträge abrufen.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Eintrag
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Entry"
+        "403":
+          description: Keine Berechtigung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Eintrag nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags: [Entry]
+      summary: Eintrag aktualisieren
+      description: Reporter können nur eigene Einträge bearbeiten.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EntryUpdate"
+      responses:
+        "200":
+          description: Eintrag aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntryUpdateResponse"
+        "400":
+          description: Ungültige Daten
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Keine Berechtigung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Eintrag nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags: [Entry]
+      summary: Eintrag löschen
+      description: Reporter können nur eigene Einträge löschen.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Eintrag gelöscht
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Eintrag erfolgreich gelöscht"
+        "403":
+          description: Keine Berechtigung
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Eintrag nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ── FirstAidKit ─────────────────────────────────────────
+  /firstAidKit:
+    get:
+      tags: [FirstAidKit]
+      summary: Alle Verbandkästen abrufen
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Liste aller Verbandkästen
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FirstAidKit"
+    post:
+      tags: [FirstAidKit]
+      summary: Verbandkasten erstellen (nur Admin)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FirstAidKitCreate"
+      responses:
+        "201":
+          description: Verbandkasten erstellt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FirstAidKitCreateResponse"
+        "400":
+          description: Fehlende Felder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /firstAidKit/{id}:
+    get:
+      tags: [FirstAidKit]
+      summary: Einzelnen Verbandkasten abrufen
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Verbandkasten
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FirstAidKit"
+        "404":
+          description: Verbandkasten nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags: [FirstAidKit]
+      summary: Verbandkasten aktualisieren (nur Admin)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FirstAidKitUpdate"
+      responses:
+        "200":
+          description: Verbandkasten aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FirstAidKitUpdateResponse"
+        "404":
+          description: Verbandkasten nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags: [FirstAidKit]
+      summary: Verbandkasten löschen (nur Admin)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Verbandkasten gelöscht
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Verbandkasten erfolgreich gelöscht"
+        "404":
+          description: Verbandkasten nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ── Product ─────────────────────────────────────────────
+  /product:
+    get:
+      tags: [Product]
+      summary: Alle Produkte abrufen
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Liste aller Produkte
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+    post:
+      tags: [Product]
+      summary: Produkt erstellen (nur Admin)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductCreate"
+      responses:
+        "201":
+          description: Produkt erstellt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductCreateResponse"
+        "400":
+          description: Fehlende Felder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Produkt mit diesem Typ existiert bereits
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /product/{id}:
+    get:
+      tags: [Product]
+      summary: Einzelnes Produkt abrufen
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Produkt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Produkt nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags: [Product]
+      summary: Produkt aktualisieren (nur Admin)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductUpdate"
+      responses:
+        "200":
+          description: Produkt aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductUpdateResponse"
+        "404":
+          description: Produkt nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags: [Product]
+      summary: Produkt löschen (nur Admin)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Produkt gelöscht
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Produkt erfolgreich gelöscht"
+        "404":
+          description: Produkt nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
