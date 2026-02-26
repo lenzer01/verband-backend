@@ -9,7 +9,7 @@ info:
 servers:
   - url: http://localhost:8080
     description: Lokale Entwicklung
-  - url: http://verbandbuch.bbz-rd-eck.com:4000
+  - url: https://verbandbuch.bbz-rd-eck.com:4000
     description: Produktion
 
 tags:
