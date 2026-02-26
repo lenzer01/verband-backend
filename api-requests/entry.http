@@ -1,0 +1,52 @@
+### Alle Einträge abrufen (Admin: alle, Reporter: eigene)
+GET {{host}}/entry
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+### Eintrag erstellen
+POST {{host}}/entry
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "kitId": "f9ec2188-288e-44c5-9043-8f267fc5004b",
+  "occurredAt": "2026-02-12T08:30:00.000Z",
+  "incident": "Schnittverletzung",
+  "description": "Schnittverletzung am Finger in der Werkstatt",
+  "firstAider": "Max Mustermann",
+  "measures": "Wunde gereinigt und Pflaster angebracht",
+  "materialList": [
+    { "type": "Pflaster", "quantity": 1 },
+    { "type": "Desinfektionsmittel", "quantity": 2 }
+  ],
+  "message": "Pflasterbestand prüfen",
+  "witness": "Erika Musterfrau"
+}
+
+###
+
+### Eintrag aktualisieren
+PUT {{host}}/entry/{{entryId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "description": "Schnittverletzung am Finger beim Schneiden",
+  "measures": "Wunde gereinigt, desinfiziert und Pflaster angebracht",
+  "materialList": [
+    { "type": "Pflaster", "quantity": 2 },
+    { "type": "Desinfektionsmittel", "quantity": 1 }
+  ],
+  "message": "Pflasterbestand aufgefüllt"
+}
+
+###
+
+### Eintrag löschen
+DELETE {{host}}/entry/{{entryId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###

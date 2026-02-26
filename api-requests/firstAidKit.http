@@ -1,0 +1,35 @@
+### Alle Verbandkästen abrufen
+GET {{host}}/firstAidKit
+Authorization: Bearer {{token}}
+
+###
+
+### Verbandkasten erstellen
+POST {{host}}/firstAidKit
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "code": "KASTEN-001",
+  "location": "Werkstatt Raum 101"
+}
+
+###
+
+### Verbandkasten aktualisieren
+PUT {{host}}/firstAidKit/{{kitId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "code": "R-102",
+  "location": "Werkstatt Raum 102"
+}
+
+###
+
+### Verbandkasten löschen
+DELETE {{host}}/firstAidKit/{{kitId}}
+Authorization: Bearer {{token}}
+
+###

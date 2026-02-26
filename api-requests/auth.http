@@ -1,0 +1,25 @@
+###
+### Login
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "max@mustermann.com",
+  "password": "geheimesPasswort123"
+}
+> {%
+    client.global.set("token", response.body.token);
+%}
+###
+### Register (Admin-Berechtigung erforderlich)
+POST {{host}}/auth/register
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Max Mustermann",
+  "email": "max@mustermann.com",
+  "password": "geheimesPasswort123",
+  "role": "ADMIN"
+}
+###

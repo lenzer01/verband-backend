@@ -1,0 +1,36 @@
+### Alle Produkte abrufen
+GET {{host}}/product
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+### Produkt erstellen
+POST {{host}}/product
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "Mullbinde"
+}
+
+###
+
+### Produkt aktualisieren
+PUT {{host}}/product/{{productId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "Mullbinde"
+}
+
+###
+
+### Produkt löschen
+DELETE {{host}}/product/{{productId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+

@@ -1,0 +1,12 @@
+### Alle Benutzer abrufen (Admin-Berechtigung)
+GET {{host}}/user
+Authorization: Bearer {{token}}
+
+###
+
+### Benutzer löschen
+DELETE {{host}}/user/{{userId}}
+Authorization: Bearer {{token}}
+
+###
+
