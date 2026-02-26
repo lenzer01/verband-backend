@@ -1,8 +1,8 @@
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 import { AppDataSource } from "../db/dataSource";
 import { User, UserRole } from "../entities/user";
+import bcrypt from "bcryptjs/umd/types";
 
 const userRepository = AppDataSource.getRepository(User);
 
