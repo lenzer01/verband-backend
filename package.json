@@ -7,8 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "start": "tsc && node dist/server.js",
-
+    "start": "node dist/server.js",
     "db:cli": "typeorm-ts-node-commonjs -d src/db/data-source.ts",
     "migration:generate": "npm run db:cli -- migration:generate src/db/migrations/Init",
     "migration:run": "npm run db:cli -- migration:run",
@@ -19,7 +18,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "bcrypt": "~6.0.0",
+    "bcryptjs": "~3.0.3",
     "cors": "~2.8.6",
     "dotenv": "~17.2.3",
     "express": "~5.2.1",
@@ -32,7 +31,7 @@
     "zod": "~4.3.6"
   },
   "devDependencies": {
-    "@types/bcrypt": "~6.0.0",
+    "@types/bcryptjs": "~2.4.6",
     "@types/cors": "~2.8.19",
     "@types/express": "~5.0.6",
     "@types/jsonwebtoken": "~9.0.10",
