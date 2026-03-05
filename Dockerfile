@@ -14,6 +14,7 @@ WORKDIR /verbandbuch-ms
 
 COPY --from=build_stage /verbandbuch-ms/dist ./dist
 COPY --from=build_stage /verbandbuch-ms/package*.json ./
+COPY --from=build_stage /verbandbuch-ms/api-docs.yml ./
 
 RUN npm ci --only=prod
 
