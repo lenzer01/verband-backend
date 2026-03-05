@@ -13,7 +13,7 @@ FROM node:24.11.1-bookworm-slim AS prod_stage
 WORKDIR /verbandbuch-ms
 
 COPY --from=build_stage /verbandbuch-ms/dist ./dist
-COPY --from=build_stage /verbandbuch-sm/package*.json ./
+COPY --from=build_stage /verbandbuch-ms/package*.json ./
 
 RUN npm ci --only=prod
 
